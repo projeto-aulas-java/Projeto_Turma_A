@@ -1,5 +1,10 @@
 package br.com.etec.model;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -24,7 +29,7 @@ public class Operacoes {
 	private Stage acpPalco;
 	
 	@FXML
-	private void validarUsuario(ActionEvent event) {
+	private void validarUsuario(ActionEvent event) throws SQLException{
 		String nomeUsuario;
 		nomeUsuario = txfUsuario.getText();
 		String senhaUsuario;
@@ -41,7 +46,7 @@ public class Operacoes {
 	} // 1º if
 		
 		else {
-			if(nomeUsuario.equals("admin") && senhaUsuario.equals("123456")) {
+			if(verificarUsuarioSenha(senhaUsuario, senhaUsuario)) {
 				mostrarAlerta(Alert.AlertType.CONFIRMATION,
 						"ACESSO PERMITIDO!", "Login bem sucedido!");
 			}
@@ -49,7 +54,6 @@ public class Operacoes {
 				mostrarAlerta(Alert.AlertType.ERROR,
 						"ACESSO NEGADO!", "Usuário ou senha inválido");
 			}
-			
 		}
 		
 	} // Método
@@ -68,4 +72,33 @@ public class Operacoes {
 		acpPalco.close();
 	}
 	
+	private boolean verificarUsuarioSenha(String usuario, String senha) throws SQLException {
+	       Connection conexao = null;
+	       PreparedStatement stmt = null;
+	       ResultSet rs = null;
+	       boolean usuarioValido = false;
+
+	       try {
+	           conexao = ClasseConexao.conectar();
+	           String sql = "SELECT * FROM tabelasenha WHERE usuario = ? AND senha = ?";
+	           stmt = conexao.prepareStatement(sql);
+	           stmt.setString(1, usuario);
+	           stmt.setString(2, senha);
+	           rs = stmt.executeQuery();
+
+	            if (rs.next()) {
+	                usuarioValido = true;
+	            }
+	        } finally {
+	            if (rs != null) {
+	                rs.close();
+	            }
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	            ClasseConexao.fechar(conexao);
+	        }
+
+	        return usuarioValido;
+	    }
 }
