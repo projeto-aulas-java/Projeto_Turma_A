@@ -1,5 +1,6 @@
 package br.com.etec.model;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,14 +8,20 @@ import java.sql.SQLException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Operacoes {
 	
+	//------------------------------
 	@FXML
 	private TextField txfUsuario;
 	@FXML
@@ -27,9 +34,12 @@ public class Operacoes {
 	private Button btnFechar;
 	@FXML
 	private Stage acpPalco;
-	
 	@FXML
-	private void validarUsuario(ActionEvent event) throws SQLException{
+	private Stage primaryStage;
+	
+	//------------------------------
+	@FXML
+	private void validarUsuario(ActionEvent event) throws SQLException, IOException{
 		String nomeUsuario;
 		nomeUsuario = txfUsuario.getText();
 		String senhaUsuario;
@@ -49,6 +59,7 @@ public class Operacoes {
 			if(verificarUsuarioSenha(senhaUsuario, senhaUsuario)) {
 				mostrarAlerta(Alert.AlertType.CONFIRMATION,
 						"ACESSO PERMITIDO!", "Login bem sucedido!");
+				navegarParaTelaPrincipal(event);
 			}
 			else {
 				mostrarAlerta(Alert.AlertType.ERROR,
@@ -58,6 +69,8 @@ public class Operacoes {
 		
 	} // Método
 
+	
+	//------------------------------
 	private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
 		Alert alerta = new Alert(tipo);
 		alerta.setTitle(titulo);
@@ -66,12 +79,14 @@ public class Operacoes {
 		alerta.showAndWait();
 	}
 	
+	//------------------------------
 	@FXML
 	private void fecharTelaLogin(ActionEvent event) {
 		acpPalco = (Stage) btnFechar.getScene().getWindow();
 		acpPalco.close();
 	}
 	
+	//------------------------------
 	private boolean verificarUsuarioSenha(String usuario, String senha) throws SQLException {
 	       Connection conexao = null;
 	       PreparedStatement stmt = null;
@@ -80,7 +95,7 @@ public class Operacoes {
 
 	       try {
 	           conexao = ClasseConexao.conectar();
-	           String sql = "SELECT * FROM tabelasenha WHERE usuario = ? AND senha = ?";
+	           String sql = "SELECT * FROM tabelassenhas WHERE usuario = ? AND senha = ?";
 	           stmt = conexao.prepareStatement(sql);
 	           stmt.setString(1, usuario);
 	           stmt.setString(2, senha);
@@ -101,4 +116,21 @@ public class Operacoes {
 
 	        return usuarioValido;
 	    }
+	
+	public void navegarParaTelaPrincipal(ActionEvent event) throws IOException{
+		
+		AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("/br/com/etec/view/telaPrincipal.fxml"));
+		
+		primaryStage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		
+		Scene scene = new Scene(root);
+		scene.getStylesheets().add(getClass().getResource("/br/com/etec/view/application.css").toExternalForm());
+		primaryStage.setScene(scene);
+		
+		//primaryStage.initStyle(StageStyle.UNDECORATED);
+		
+		primaryStage.show();
+		
+	}
+	
 }
