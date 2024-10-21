@@ -27,7 +27,7 @@ public class operacoesTelaPricnipal implements Initializable{
 	ComboBox<String> cmbMarca;
 	@FXML
 	ComboBox<String> cmbModelo;
-
+//
 	// Inicia os valores das combobox
 	public void initialize(URL url, ResourceBundle rb) {
 		
