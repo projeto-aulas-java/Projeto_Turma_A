@@ -10,7 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 
-public class operacoesTelaPricnipal implements Initializable{
+public class operacoesTelaPrincipal implements Initializable{
 	
 	// Botões
 	@FXML
